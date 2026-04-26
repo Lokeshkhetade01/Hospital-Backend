@@ -91,7 +91,8 @@ exports.getMyAppointments = async (req, res, next) => {
           path:     'doctor',
           select:   'specialization fees hospital user',
           populate: { path: 'user', select: 'name avatar' },
-        }),
+        })
+       
     ]);
 
     res.json({ success: true, total, page: +page, pages: Math.ceil(total / +limit), appointments });

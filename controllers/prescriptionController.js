@@ -9,7 +9,11 @@ exports.getMyPrescriptions = async (req, res, next) => {
     const prescriptions = await Prescription.find({ patient: req.user._id })
       .sort('-createdAt')
       .populate({ path: 'doctor', select: 'specialization user', populate: { path: 'user', select: 'name avatar' } })
-      .populate('appointment', 'date timeSlot');
+      .populate('appointment', 'date timeSlot')
+      .populate({
+        path: 'patient',
+        select: 'name'
+      });
 
     res.json({ success: true, count: prescriptions.length, prescriptions });
   } catch (err) { next(err); }
