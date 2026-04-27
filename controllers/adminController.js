@@ -27,15 +27,70 @@ exports.adminLogin = async (req, res, next) => {
 // ═══════════════════════════════════════════════════════════════════════════
 //  GET /api/admin/dashboard   ADMIN
 // ═══════════════════════════════════════════════════════════════════════════
+
+// exports.getDashboard = async (req, res, next) => {
+//   try {
+//     const today    = new Date(); today.setHours(0, 0, 0, 0);
+//     const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
+//     const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+
+//     const [
+//       totalPatients, totalDoctors, verifiedDoctors, unverifiedDoctors,
+//       todayTotal, pendingCount, recentAppointments, monthlyRevAgg,
+//     ] = await Promise.all([
+//       User.countDocuments({ role: 'patient' }),
+//       Doctor.countDocuments(),
+//       Doctor.countDocuments({ isVerified: true }),
+//       Doctor.countDocuments({ isVerified: false }),
+//       Appointment.countDocuments({ date: { $gte: today, $lt: tomorrow } }),
+//       Appointment.countDocuments({ status: 'pending' }),
+//       Appointment.find()
+//         .sort('-createdAt').limit(8)
+//         .populate('patient', 'name email')
+//         .populate({ path: 'doctor', populate: { path: 'user', select: 'name' } }),
+//       Payment.aggregate([
+//         { $match: { status: 'paid', createdAt: { $gte: monthStart } } },
+//         { $group: { _id: null, total: { $sum: '$amount' } } },
+//       ]),
+//     ]);
+
+//     res.json({
+//       success: true,
+//       data: {
+//         stats: {
+//           totalPatients, totalDoctors, verifiedDoctors, unverifiedDoctors,
+//           todayTotal, pendingCount,
+//           monthlyRevenue: monthlyRevAgg[0]?.total || 0,
+//         },
+//         recentAppointments,
+//       },
+//     });
+//   } catch (err) { next(err); }
+// };
+
 exports.getDashboard = async (req, res, next) => {
   try {
-    const today    = new Date(); today.setHours(0, 0, 0, 0);
-    const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
+    // Pagination parameters from request query
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const today = new Date(); 
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today); 
+    tomorrow.setDate(today.getDate() + 1);
     const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
 
     const [
-      totalPatients, totalDoctors, verifiedDoctors, unverifiedDoctors,
-      todayTotal, pendingCount, recentAppointments, monthlyRevAgg,
+      totalPatients, 
+      totalDoctors, 
+      verifiedDoctors, 
+      unverifiedDoctors,
+      todayTotal, 
+      pendingCount, 
+      recentAppointments, 
+      totalAppointmentsCount, // Total count for pagination
+      monthlyRevAgg,
     ] = await Promise.all([
       User.countDocuments({ role: 'patient' }),
       Doctor.countDocuments(),
@@ -43,10 +98,15 @@ exports.getDashboard = async (req, res, next) => {
       Doctor.countDocuments({ isVerified: false }),
       Appointment.countDocuments({ date: { $gte: today, $lt: tomorrow } }),
       Appointment.countDocuments({ status: 'pending' }),
+      // Updated recentAppointments with skip and limit
       Appointment.find()
-        .sort('-createdAt').limit(8)
+        .sort('-createdAt')
+        .skip(skip)
+        .limit(limit)
         .populate('patient', 'name email')
         .populate({ path: 'doctor', populate: { path: 'user', select: 'name' } }),
+      // Fetch total count for calculating total pages
+      Appointment.countDocuments(),
       Payment.aggregate([
         { $match: { status: 'paid', createdAt: { $gte: monthStart } } },
         { $group: { _id: null, total: { $sum: '$amount' } } },
@@ -57,15 +117,30 @@ exports.getDashboard = async (req, res, next) => {
       success: true,
       data: {
         stats: {
-          totalPatients, totalDoctors, verifiedDoctors, unverifiedDoctors,
-          todayTotal, pendingCount,
+          totalPatients, 
+          totalDoctors, 
+          verifiedDoctors, 
+          unverifiedDoctors,
+          todayTotal, 
+          pendingCount,
           monthlyRevenue: monthlyRevAgg[0]?.total || 0,
         },
         recentAppointments,
+        // Pagination Metadata
+        pagination: {
+          total: totalAppointmentsCount,
+          page,
+          limit,
+          totalPages: Math.ceil(totalAppointmentsCount / limit)
+        }
       },
     });
-  } catch (err) { next(err); }
+  } catch (err) { 
+    next(err); 
+  }
 };
+
+
 
 // ═══════════════════════════════════════════════════════════════════════════
 //  APPOINTMENTS
