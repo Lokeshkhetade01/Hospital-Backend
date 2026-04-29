@@ -204,6 +204,49 @@ exports.getAllAppointments = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
+
+exports.getAppointmentById = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    // Validation: Check if ID exists
+    if (!id) {
+      return res.status(400).json({ success: false, message: "Appointment ID is required" });
+    }
+
+    const appointment = await Appointment.findById(id)
+      .populate('patient', 'name email phone avatar gender dob address') // Patient ki basic details
+      .populate({
+        path: 'doctor',
+        select: 'specialization fees user hospital city regNumber experience about',
+        populate: {
+          path: 'user',
+          select: 'name email avatar' // Doctor ka user profile data
+        }
+      });
+
+    if (!appointment) {
+      return res.status(404).json({
+        success: false,
+        message: "Appointment not found"
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: appointment
+    });
+  } catch (err) {
+    // Agar invalid MongoDB ID hai toh specific error handle karein
+    if (err.name === 'CastError') {
+      return res.status(400).json({ success: false, message: "Invalid Appointment ID format" });
+    }
+    next(err);
+  }
+};
+
+
+
 // PUT /api/admin/appointments/:id/status
 exports.updateAppointmentStatus = async (req, res, next) => {
   try {
@@ -348,7 +391,7 @@ exports.getAllUsers = async (req, res, next) => {
       User.find(filter).sort('-createdAt').skip((+page - 1) * +limit).limit(+limit),
     ]);
 
-    res.json({ success: true, total, page: +page, pages: Math.ceil(total / +limit), users });
+    res.json({ success: true,message:"fetch all user successfully!", total, page: +page, pages: Math.ceil(total / +limit), users });
   } catch (err) { next(err); }
 };
 
