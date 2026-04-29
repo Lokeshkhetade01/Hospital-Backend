@@ -59,7 +59,7 @@ app.use('/api/doctors',       require('./routes/doctorRoutes'));
 app.use('/api/appointments',  require('./routes/appointmentRoutes'));
 app.use('/api/payments',      require('./routes/paymentRoutes'));
 app.use('/api/prescriptions', require('./routes/prescriptionRoutes'));
-
+app.use('/api/faqs', require('./routes/faqRoutes'));
 // ─── Health Check ───────────────────────────────────────────────────────────
 app.get('/health', (_req, res) =>
   res.json({ status: 'OK', time: new Date().toISOString() })

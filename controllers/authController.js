@@ -1,6 +1,7 @@
 // controllers/authController.js
 const User          = require('../models/User');
 const generateToken = require('../utils/generateToken');
+const { json } = require('express');
 
 // ───────────────────────────────────────────────────────────────────────────
 // POST /api/auth/register   PUBLIC

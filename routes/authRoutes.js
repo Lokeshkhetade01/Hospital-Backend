@@ -15,7 +15,6 @@ const { protect } = require('../middleware/authMiddleware');
 // POST /api/auth/login     →  all users login (patient / doctor / admin)
 router.post('/register', register);
 router.post('/login',    login);
-
 // ─── Protected (any logged-in user) ───────────────────────────────────────
 // GET  /api/auth/me               →  get own profile
 // PUT  /api/auth/update-profile   →  update name, phone, avatar, etc.
