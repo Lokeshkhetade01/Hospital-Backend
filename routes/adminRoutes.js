@@ -18,7 +18,8 @@ const {
   getAnalytics,
   getSettings,
   saveSettings,
-  adminRegister
+  adminRegister,
+  getAppointmentById
 } = require('../controllers/adminController');
 const {doctorLogin} = require("../controllers/authController")
 const { protect, authorize } = require('../middleware/authMiddleware');
@@ -40,6 +41,7 @@ router.get('/dashboard', getDashboard);
 // GET /api/admin/appointments?status=pending&date=2026-04-19&page=1&limit=10
 // PUT /api/admin/appointments/:id/status  → { status, cancelReason }
 router.get('/appointments',             getAllAppointments);
+router.get('/appointments/:id', getAppointmentById);
 router.put('/appointments/:id/status',  updateAppointmentStatus);
 
 // ── Doctors ────────────────────────────────────────────────────────────────
