@@ -131,8 +131,10 @@ exports.createPrescription = async (req, res, next) => {
       diagnosis, medicines, advice, followUpDate, attachments,
     });
 
-    if (appt.status !== 'completed') { appt.status = 'completed'; await appt.save(); }
-
+    if (appt.status !== 'completed') { appt.status = 'completed'; 
+      appt.isPrescriptionDone = true;
+      appt.prescriptionId = rx._id;
+      await appt.save(); }
     req.app.get('io')?.to(appt.patient._id.toString()).emit('prescription-ready', {
       rxId:    rx._id,
       message: `Your prescription from Dr. ${req.user.name} is ready.`,

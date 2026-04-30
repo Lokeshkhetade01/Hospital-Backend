@@ -6,6 +6,7 @@ const appointmentSchema = new mongoose.Schema({
   doctor:       { type: mongoose.Schema.Types.ObjectId, ref: 'Doctor', required: true },
   date:         { type: Date,   required: true },
   timeSlot:     { type: String, required: true },
+  isPrescriptionDone: { type: Boolean, default: false },
   symptoms:     { type: String },
   notes:        { type: String },   // doctor's internal notes
   status: {
