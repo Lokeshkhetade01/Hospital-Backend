@@ -33,8 +33,7 @@ const io = new Server(server, {
 socketHandler(io);
 app.set('io', io); // accessible in all controllers via req.app.get('io')
 
-// ─── Core Middleware ────────────────────────────────────────────────────────
-app.use(helmet());
+
 
 // app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:5173', credentials: true }));
 // app.use(cors({
@@ -52,11 +51,24 @@ app.use(helmet());
 //   credentials: true
 // }));
 
-// 2 this added
+// 2 this remove
+// app.use(cors({
+//   origin: true,
+//   credentials: true
+// }));
 app.use(cors({
-  origin: true,
+  origin: "https://medical-websites.netlify.app",
   credentials: true
 }));
+// 1 remove this
+// app.options("*", cors()); 
+app.options("*", cors({
+  origin: "https://medical-websites.netlify.app",
+  credentials: true
+}));
+
+// ─── Core Middleware ────────────────────────────────────────────────────────
+app.use(helmet());
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
