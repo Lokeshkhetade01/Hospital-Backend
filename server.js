@@ -15,32 +15,49 @@ const app    = express();
 const server = http.createServer(app);
 
 // ─── Socket.io ─────────────────────────────────────────────────────────────
+// const io = new Server(server, {
+//   cors: {
+//     origin:      process.env.CLIENT_URL || 'http://localhost:',
+//     credentials: true,
+//   },
+// });
+
+// 1 this add
 const io = new Server(server, {
   cors: {
-    origin:      process.env.CLIENT_URL || 'http://localhost:',
-    credentials: true,
+    origin: true,
+    credentials: true
   },
 });
+
 socketHandler(io);
 app.set('io', io); // accessible in all controllers via req.app.get('io')
 
 // ─── Core Middleware ────────────────────────────────────────────────────────
 app.use(helmet());
+
 // app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:5173', credentials: true }));
+// app.use(cors({
+//   origin: function (origin, callback) {
+//     // Development mein har local origin ko allow kar do
+//     if (!origin || origin.startsWith('http://localhost:')) {
+//       return callback(null, true);
+//     }
+//     // Production ke liye process.env.CLIENT_URL check karo
+//     if (origin === process.env.CLIENT_URL) {
+//       return callback(null, true);
+//     }
+//     return callback(new Error('Not allowed by CORS'));
+//   },
+//   credentials: true
+// }));
+
+// 2 this added
 app.use(cors({
-  origin: function (origin, callback) {
-    // Development mein har local origin ko allow kar do
-    if (!origin || origin.startsWith('http://localhost:')) {
-      return callback(null, true);
-    }
-    // Production ke liye process.env.CLIENT_URL check karo
-    if (origin === process.env.CLIENT_URL) {
-      return callback(null, true);
-    }
-    return callback(new Error('Not allowed by CORS'));
-  },
+  origin: true,
   credentials: true
 }));
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
