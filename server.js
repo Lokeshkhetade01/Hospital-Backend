@@ -52,20 +52,21 @@ app.set('io', io); // accessible in all controllers via req.app.get('io')
 // }));
 
 // 2 this remove
+app.use(cors({
+  origin: true,
+  credentials: true
+}));
 // app.use(cors({
-//   origin: true,
+//   origin: "https://medical-websites.netlify.app",
 //   credentials: true
 // }));
-app.use(cors({
-  origin: "https://medical-websites.netlify.app",
-  credentials: true
-}));
 // 1 remove this
-// app.options("*", cors()); 
-app.options("*", cors({
-  origin: "https://medical-websites.netlify.app",
-  credentials: true
-}));
+app.options("*", cors()); 
+
+// app.options("*", cors({
+//   origin: "https://medical-websites.netlify.app",
+//   credentials: true
+// }));
 
 // ─── Core Middleware ────────────────────────────────────────────────────────
 app.use(helmet());
