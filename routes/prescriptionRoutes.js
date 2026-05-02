@@ -4,6 +4,7 @@ const router  = express.Router();
 const {
   getMyPrescriptions,
   getPrescriptionById,
+  getMyPrescriptionPDF,
 } = require('../controllers/prescriptionController');
 const { protect, authorize } = require('../middleware/authMiddleware');
 
@@ -16,6 +17,8 @@ const { protect, authorize } = require('../middleware/authMiddleware');
 // → populated with doctor name, specialization, appointment date/slot
 router.get('/mine', protect, authorize('patient'), getMyPrescriptions);
 
+// GET /api/prescriptions/:id/pdf
+router.get('/:id/pdf', protect, authorize('patient'), getMyPrescriptionPDF);
 // GET /api/prescriptions/:id
 // → single prescription detail
 // → only accessible by the patient it belongs to
