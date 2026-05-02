@@ -14,14 +14,6 @@ connectDB();
 const app    = express();
 const server = http.createServer(app);
 
-// ─── Socket.io ─────────────────────────────────────────────────────────────
-// const io = new Server(server, {
-//   cors: {
-//     origin:      process.env.CLIENT_URL || 'http://localhost:',
-//     credentials: true,
-//   },
-// });
-
 // 1 this add
 const io = new Server(server, {
   cors: {
@@ -31,42 +23,14 @@ const io = new Server(server, {
 });
 
 socketHandler(io);
-app.set('io', io); // accessible in all controllers via req.app.get('io')
-
-
-
-// app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:5173', credentials: true }));
-// app.use(cors({
-//   origin: function (origin, callback) {
-//     // Development mein har local origin ko allow kar do
-//     if (!origin || origin.startsWith('http://localhost:')) {
-//       return callback(null, true);
-//     }
-//     // Production ke liye process.env.CLIENT_URL check karo
-//     if (origin === process.env.CLIENT_URL) {
-//       return callback(null, true);
-//     }
-//     return callback(new Error('Not allowed by CORS'));
-//   },
-//   credentials: true
-// }));
+app.set('io', io); 
 
 // 2 this remove
 app.use(cors({
   origin: true,
   credentials: true
 }));
-// app.use(cors({
-//   origin: "https://medical-websites.netlify.app",
-//   credentials: true
-// }));
-// 1 remove this
 app.options("*", cors()); 
-
-// app.options("*", cors({
-//   origin: "https://medical-websites.netlify.app",
-//   credentials: true
-// }));
 
 // ─── Core Middleware ────────────────────────────────────────────────────────
 app.use(helmet());
