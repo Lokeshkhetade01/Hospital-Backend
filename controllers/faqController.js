@@ -34,7 +34,7 @@ exports.getFaq = async (req, res) => {
   }
 };
 
-// ✏️ Update Faq (Admin)
+
 exports.updateFaq = async (req, res) => {
   try {
     const faq = await Faq.findByIdAndUpdate(

@@ -9,18 +9,23 @@ const {
   changePassword,
 } = require('../controllers/authController');
 const { protect } = require('../middleware/authMiddleware');
-
+const { uploadAvatar } = require('../config/cloudinary');
 // ─── Public ────────────────────────────────────────────────────────────────
 // POST /api/auth/register  →  patient self-registration
-// POST /api/auth/login     →  all users login (patient / doctor / admin)
 router.post('/register', register);
+
+// POST /api/auth/login     →  all users login (patient / doctor / admin)
 router.post('/login',    login);
+
 // ─── Protected (any logged-in user) ───────────────────────────────────────
+
 // GET  /api/auth/me               →  get own profile
+router.get ('/me',protect, getMe);
+
 // PUT  /api/auth/update-profile   →  update name, phone, avatar, etc.
+router.put('/update-profile', protect, uploadAvatar.single('avatar'), updateProfile);
+
 // PUT  /api/auth/change-password  →  change password (needs oldPassword)
-router.get ('/me',               protect, getMe);
-router.put ('/update-profile',   protect, updateProfile);
 router.put ('/change-password',  protect, changePassword);
 
 module.exports = router;

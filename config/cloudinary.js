@@ -29,8 +29,17 @@ const reportStorage = new CloudinaryStorage({
   },
 });
 
+const avatarStorage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: 'hms/avatars',
+    allowed_formats: ['jpg', 'jpeg', 'png'],
+  },
+});
+
 module.exports = {
   cloudinary,
   uploadDoc:    multer({ storage: docStorage }),
   uploadReport: multer({ storage: reportStorage }),
+   uploadAvatar: multer({ storage: avatarStorage }),
 };
