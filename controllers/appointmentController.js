@@ -45,7 +45,7 @@ exports.bookAppointment = async (req, res, next) => {
     // 4. Send confirmation email
     await sendEmail({
       to:      req.user.email,
-      subject: '✅ Appointment Booked — MediCare',
+      subject: '✅ Appointment Booked Succesfully — MediCare',
       html: `
         <div style="font-family:sans-serif;max-width:480px">
           <h2 style="color:#185FA5">MediCare Hospital</h2>
@@ -70,7 +70,7 @@ exports.bookAppointment = async (req, res, next) => {
       appointmentId: appointment._id,
     });
 
-    res.status(201).json({ success: true, message: 'Appointment booked successfully.', appointment });
+    res.status(201).json({ success: true, message: 'Appointment booked successfully Please check your email also for Verification.', appointment });
   } catch (err) { next(err); }
 };
 
