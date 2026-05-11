@@ -235,7 +235,6 @@ exports.updateAppointmentStatus = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-// ═══════════════════════════════════════════════════════════════════════════
 //  DOCTORS
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -328,7 +327,6 @@ exports.removeDoctor = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-// ═══════════════════════════════════════════════════════════════════════════
 //  USERS
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -369,7 +367,6 @@ exports.toggleBlockUser = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-// ═══════════════════════════════════════════════════════════════════════════
 //  PAYMENTS
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -487,7 +484,6 @@ exports.getSettings = async (_req, res) => {
 
 exports.saveSettings = async (req, res, next) => {
   try {
-    // In production: save to a Settings model in MongoDB
     res.json({ success: true, message: 'Settings saved successfully.' });
   } catch (err) { next(err); }
 };
