@@ -68,17 +68,6 @@ exports.getMe = async (req, res, next) => {
 // ───────────────────────────────────────────────────────────────────────────
 // PUT /api/auth/update-profile   PROTECTED
 // ───────────────────────────────────────────────────────────────────────────
-// exports.updateProfile = async (req, res, next) => {
-//   try {
-//     const allowed = ['name', 'phone', 'gender', 'dob', 'address', 'avatar'];
-//     const updates = {};
-//     allowed.forEach(f => { if (req.body[f] !== undefined) updates[f] = req.body[f]; });
-
-//     const user = await User.findByIdAndUpdate(req.user._id, updates, { new: true, runValidators: true });
-//     res.json({ success: true, user });
-//   } catch (err) { next(err); }
-// };
-
 
 exports.updateProfile = async (req, res, next) => {
   try {
@@ -91,7 +80,7 @@ exports.updateProfile = async (req, res, next) => {
 
     // 👇 Cloudinary se direct URL
     if (req.file) {
-      updates.avatar = req.file.path; // ✅ THIS IS CLOUDINARY URL
+      updates.avatar = req.file.path;
     }
 
     const user = await User.findByIdAndUpdate(

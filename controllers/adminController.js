@@ -28,46 +28,6 @@ exports.adminLogin = async (req, res, next) => {
 //  GET /api/admin/dashboard   ADMIN
 // ═══════════════════════════════════════════════════════════════════════════
 
-// exports.getDashboard = async (req, res, next) => {
-//   try {
-//     const today    = new Date(); today.setHours(0, 0, 0, 0);
-//     const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
-//     const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
-
-//     const [
-//       totalPatients, totalDoctors, verifiedDoctors, unverifiedDoctors,
-//       todayTotal, pendingCount, recentAppointments, monthlyRevAgg,
-//     ] = await Promise.all([
-//       User.countDocuments({ role: 'patient' }),
-//       Doctor.countDocuments(),
-//       Doctor.countDocuments({ isVerified: true }),
-//       Doctor.countDocuments({ isVerified: false }),
-//       Appointment.countDocuments({ date: { $gte: today, $lt: tomorrow } }),
-//       Appointment.countDocuments({ status: 'pending' }),
-//       Appointment.find()
-//         .sort('-createdAt').limit(8)
-//         .populate('patient', 'name email')
-//         .populate({ path: 'doctor', populate: { path: 'user', select: 'name' } }),
-//       Payment.aggregate([
-//         { $match: { status: 'paid', createdAt: { $gte: monthStart } } },
-//         { $group: { _id: null, total: { $sum: '$amount' } } },
-//       ]),
-//     ]);
-
-//     res.json({
-//       success: true,
-//       data: {
-//         stats: {
-//           totalPatients, totalDoctors, verifiedDoctors, unverifiedDoctors,
-//           todayTotal, pendingCount,
-//           monthlyRevenue: monthlyRevAgg[0]?.total || 0,
-//         },
-//         recentAppointments,
-//       },
-//     });
-//   } catch (err) { next(err); }
-// };
-
 exports.getDashboard = async (req, res, next) => {
   try {
     // Pagination parameters from request query
@@ -453,11 +413,6 @@ exports.processRefund = async (req, res, next) => {
     if (!payment) return res.status(404).json({ success: false, message: 'Payment not found.' });
     if (payment.status !== 'refund_requested')
       return res.status(400).json({ success: false, message: 'No active refund request.' });
-
-    // TODO: call Razorpay refund API in production:
-    // const razorpay = new Razorpay({ key_id: ..., key_secret: ... });
-    // const refund = await razorpay.payments.refund(payment.razorpayPaymentId, { amount: payment.amount * 100 });
-    // payment.refundId = refund.id;
 
     payment.status       = 'refunded';
     payment.refundAmount = payment.amount;
