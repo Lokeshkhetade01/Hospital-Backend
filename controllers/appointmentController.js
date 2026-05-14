@@ -70,7 +70,7 @@ exports.bookAppointment = async (req, res, next) => {
       appointmentId: appointment._id,
     });
 
-    res.status(201).json({ success: true, message: 'Appointment booked successfully Please check your email also for Verification.', appointment });
+    res.status(201).json({ success: true, message: 'Appointment booked successfully.', appointment });
   } catch (err) { next(err); }
 };
 

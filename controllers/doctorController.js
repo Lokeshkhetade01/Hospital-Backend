@@ -236,62 +236,6 @@ exports.getPatientHistory = async (req, res, next) => {
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
-//  SCHEDULE
-// ═══════════════════════════════════════════════════════════════════════════
-
-// GET /api/doctors/me/schedule
-exports.getSchedule = async (req, res, next) => {
-  try {
-    const doctor = await Doctor.findOne({ user: req.user._id }).select('availability isAvailable');
-    if (!doctor) return res.status(404).json({ success: false, message: 'Doctor profile not found.' });
-    res.json({ success: true, availability: doctor.availability, isAvailable: doctor.isAvailable });
-  } catch (err) { next(err); }
-};
-
-// PUT /api/doctors/me/schedule
-exports.updateSchedule = async (req, res, next) => {
-  try {
-    const { availability, isAvailable } = req.body;
-    const doctor = await Doctor.findOneAndUpdate(
-      { user: req.user._id },
-      { availability, isAvailable },
-      { new: true }
-    );
-    if (!doctor) return res.status(404).json({ success: false, message: 'Doctor profile not found.' });
-    res.json({ success: true, message: 'Schedule updated.', availability: doctor.availability });
-  } catch (err) { next(err); }
-};
-
-// GET /api/doctors/slots?doctorId=xxx&date=2026-04-20   PUBLIC
-exports.getAvailableSlots = async (req, res, next) => {
-  try {
-    const { doctorId, date } = req.query;
-    if (!doctorId || !date)
-      return res.status(400).json({ success: false, message: 'doctorId and date are required.' });
-
-    const doctor = await Doctor.findById(doctorId);
-    if (!doctor || !doctor.isVerified)
-      return res.status(404).json({ success: false, message: 'Doctor not found.' });
-
-    const dayName = new Date(date).toLocaleDateString('en-US', { weekday: 'long' });
-    const dayAvail = doctor.availability.find(a => a.day === dayName);
-    if (!dayAvail) return res.json({ success: true, slots: [], bookedSlots: [] });
-
-    const d = new Date(date); d.setHours(0, 0, 0, 0);
-    const n = new Date(d); n.setDate(d.getDate() + 1);
-
-    const booked    = await Appointment.find({ doctor: doctorId, date: { $gte: d, $lt: n }, status: { $ne: 'cancelled' } }).select('timeSlot');
-    const bookedSet = new Set(booked.map(a => a.timeSlot));
-
-    res.json({
-      success: true,
-      slots:       dayAvail.slots.filter(s => !bookedSet.has(s)),
-      bookedSlots: [...bookedSet],
-    });
-  } catch (err) { next(err); }
-};
-
-// ═══════════════════════════════════════════════════════════════════════════
 //  PROFILE
 // ═══════════════════════════════════════════════════════════════════════════
 
