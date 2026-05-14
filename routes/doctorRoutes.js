@@ -5,7 +5,6 @@ const {
   // Public
   listDoctors,
   getDoctorById,
-  getAvailableSlots,
   // Doctor panel
   getDoctorDashboard,
   getMyAppointments,
@@ -15,8 +14,6 @@ const {
   getPrescriptionPDF,
   getMyPatients,
   getPatientHistory,
-  getSchedule,
-  updateSchedule,
   getDoctorProfile,
   updateDoctorProfile,
   uploadDocuments,
@@ -25,11 +22,12 @@ const { protect, authorize }  = require('../middleware/authMiddleware');
 const { uploadDoc }           = require('../config/cloudinary');
 
 // ─── Public routes (used by patient website) ───────────────────────────────
+
 // GET /api/doctors              → list all verified doctors with filters
-// GET /api/doctors/slots        → available time slots for a date
-// GET /api/doctors/:id          → single doctor detail page
 router.get('/',      listDoctors);
-router.get('/slots', getAvailableSlots);
+
+
+// GET /api/doctors/:id          → single doctor detail page
 router.get('/:id',   getDoctorById);
 
 // ─── Doctor-only protected routes ─────────────────────────────────────────
@@ -59,11 +57,6 @@ router.get ('/me/prescriptions/:id/pdf',  getPrescriptionPDF);
 router.get('/me/patients',                    getMyPatients);
 router.get('/me/patients/:patientId/history', getPatientHistory);
 
-// Schedule
-// GET /api/doctors/me/schedule
-// PUT /api/doctors/me/schedule → { availability: [{day, slots[]}], isAvailable }
-router.get('/me/schedule', getSchedule);
-router.put('/me/schedule', updateSchedule);
 
 // Profile
 // GET  /api/doctors/me/profile

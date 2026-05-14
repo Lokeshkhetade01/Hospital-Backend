@@ -14,7 +14,7 @@ const {
   getAllUsers,
   toggleBlockUser,
   getAllPayments,
-  processRefund,
+  // processRefund,
   getAnalytics,
   getSettings,
   saveSettings,
@@ -67,7 +67,7 @@ router.put('/users/:id/block',  toggleBlockUser);
 // GET  /api/admin/payments?status=paid&page=1
 // POST /api/admin/payments/:id/refund
 router.get ('/payments',             getAllPayments);
-router.post('/payments/:id/refund',  processRefund);
+// router.post('/payments/:id/refund',  processRefund);
 
 // ── Analytics ──────────────────────────────────────────────────────────────
 // GET /api/admin/analytics

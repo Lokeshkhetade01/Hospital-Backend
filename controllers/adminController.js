@@ -374,8 +374,10 @@ exports.toggleBlockUser = async (req, res, next) => {
 exports.getAllPayments = async (req, res, next) => {
   try {
     const { status, page = 1, limit = 10 } = req.query;
-    const filter = {};
-    if (status) filter.status = status;
+    // const filter = {};
+    // if (status) filter.status = status;
+
+     const filter = { status: "paid" };
 
     const now   = new Date();
     const start = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -404,22 +406,22 @@ exports.getAllPayments = async (req, res, next) => {
 };
 
 // POST /api/admin/payments/:id/refund
-exports.processRefund = async (req, res, next) => {
-  try {
-    const payment = await Payment.findById(req.params.id);
-    if (!payment) return res.status(404).json({ success: false, message: 'Payment not found.' });
-    if (payment.status !== 'refund_requested')
-      return res.status(400).json({ success: false, message: 'No active refund request.' });
+// exports.processRefund = async (req, res, next) => {
+//   try {
+//     const payment = await Payment.findById(req.params.id);
+//     if (!payment) return res.status(404).json({ success: false, message: 'Payment not found.' });
+//     if (payment.status !== 'refund_requested')
+//       return res.status(400).json({ success: false, message: 'No active refund request.' });
 
-    payment.status       = 'refunded';
-    payment.refundAmount = payment.amount;
-    await payment.save();
+//     payment.status       = 'refunded';
+//     payment.refundAmount = payment.amount;
+//     await payment.save();
 
-    await Appointment.findByIdAndUpdate(payment.appointment, { refundStatus: 'processed' });
+//     await Appointment.findByIdAndUpdate(payment.appointment, { refundStatus: 'processed' });
 
-    res.json({ success: true, message: 'Refund processed.', payment });
-  } catch (err) { next(err); }
-};
+//     res.json({ success: true, message: 'Refund processed.', payment });
+//   } catch (err) { next(err); }
+// };
 
 // ═══════════════════════════════════════════════════════════════════════════
 //  ANALYTICS
