@@ -11,7 +11,7 @@ exports.bookAppointment = async (req, res, next) => {
     const { doctorId, date, timeSlot, symptoms } = req.body;
 
     if (!doctorId || !date || !timeSlot)
-      return res.status(400).json({ success: false, message: 'doctorId, date and timeSlot are required.' });
+      return res.status(400).json({ success: false, message: 'doctorId, date and timeSlot are required.' }); 
 
     // 1. Verify doctor
     const doctor = await Doctor.findById(doctorId).populate('user', 'name');
@@ -43,32 +43,32 @@ exports.bookAppointment = async (req, res, next) => {
     });
 
     // 4. Send confirmation email
-    await sendEmail({
-      to:      req.user.email,
-      subject: '✅ Appointment Booked Succesfully — MediCare',
-      html: `
-        <div style="font-family:sans-serif;max-width:480px">
-          <h2 style="color:#185FA5">MediCare Hospital</h2>
-          <p>Hi <b>${req.user.name}</b>, your appointment is booked!</p>
-          <table style="width:100%;border-collapse:collapse;font-size:14px">
-            <tr><td style="padding:6px 0;color:#666">Doctor</td><td><b>Dr. ${doctor.user.name}</b></td></tr>
-            <tr><td style="padding:6px 0;color:#666">Specialization</td><td>${doctor.specialization}</td></tr>
-            <tr><td style="padding:6px 0;color:#666">Date</td><td>${new Date(date).toDateString()}</td></tr>
-            <tr><td style="padding:6px 0;color:#666">Time</td><td>${timeSlot}</td></tr>
-            <tr><td style="padding:6px 0;color:#666">Consultation fee</td><td>₹${doctor.fees}</td></tr>
-            <tr><td style="padding:6px 0;color:#666">Platform fee</td><td>₹${process.env.PLATFORM_FEE || 29}</td></tr>
-            <tr><td style="padding:6px 0;color:#666">Booking ID</td><td><b>#${appointment._id}</b></td></tr>
-          </table>
-          <p style="color:#888;font-size:12px">Please arrive 10 minutes early. Team MediCare</p>
-        </div>
-      `,
-    }).catch(() => {});  // don't fail if email fails
+    // await sendEmail({
+    //   to:      req.user.email,
+    //   subject: '✅ Appointment Booked Succesfully — MediCare',
+    //   html: `
+    //     <div style="font-family:sans-serif;max-width:480px">
+    //       <h2 style="color:#185FA5">MediCare Hospital</h2>
+    //       <p>Hi <b>${req.user.name}</b>, your appointment is booked!</p>
+    //       <table style="width:100%;border-collapse:collapse;font-size:14px">
+    //         <tr><td style="padding:6px 0;color:#666">Doctor</td><td><b>Dr. ${doctor.user.name}</b></td></tr>
+    //         <tr><td style="padding:6px 0;color:#666">Specialization</td><td>${doctor.specialization}</td></tr>
+    //         <tr><td style="padding:6px 0;color:#666">Date</td><td>${new Date(date).toDateString()}</td></tr>
+    //         <tr><td style="padding:6px 0;color:#666">Time</td><td>${timeSlot}</td></tr>
+    //         <tr><td style="padding:6px 0;color:#666">Consultation fee</td><td>₹${doctor.fees}</td></tr>
+    //         <tr><td style="padding:6px 0;color:#666">Platform fee</td><td>₹${process.env.PLATFORM_FEE || 29}</td></tr>
+    //         <tr><td style="padding:6px 0;color:#666">Booking ID</td><td><b>#${appointment._id}</b></td></tr>
+    //       </table>
+    //       <p style="color:#888;font-size:12px">Please arrive 10 minutes early. Team MediCare</p>
+    //     </div>
+    //   `,
+    // }).catch(() => {});  // don't fail if email fails
 
     // 5. Notify admin via Socket.io
-    req.app.get('io')?.to('admin-room').emit('new-appointment', {
-      message:       `New booking by ${req.user.name} with Dr. ${doctor.user.name}`,
-      appointmentId: appointment._id,
-    });
+    // req.app.get('io')?.to('admin-room').emit('new-appointment', {
+    //   message:       `New booking by ${req.user.name} with Dr. ${doctor.user.name}`,
+    //   appointmentId: appointment._id,
+    // });
 
     res.status(201).json({ success: true, message: 'Appointment booked successfully.', appointment });
   } catch (err) { next(err); }
